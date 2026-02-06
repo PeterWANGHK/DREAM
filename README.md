@@ -207,46 +207,6 @@ From `risk_analysis_utils.py`:
 
 ---
 
-## 🛠️ Troubleshooting
-
-### Issue: "Module 'config' not found"
-
-**Solution:** Ensure DRIFT files are in the same directory or Python path:
-```python
-sys.path.append(r"C:\DREAM")  # Add to script
-```
-
-### Issue: Risk field appears too faint
-
-**Solutions:**
-1. Increase `RISK_ALPHA` (e.g., 0.6)
-2. Lower `RISK_VMAX` (e.g., 2.0) to saturate colors earlier
-3. Use `'hot'` or `'YlOrRd'` colormap
-4. Try `viz_cfg.preset_dramatic()`
-
-### Issue: Risk field appears too cluttered
-
-**Solutions:**
-1. Decrease `RISK_ALPHA` (e.g., 0.25)
-2. Disable contour lines: `SHOW_CONTOUR = False`
-3. Increase smoothing: `RISK_SMOOTHING_SIGMA = 2.0`
-4. Try `viz_cfg.preset_subtle()`
-
-### Issue: Simulation is slow
-
-**Solutions:**
-1. Reduce PDE substeps: `DRIFT_SUBSTEPS = 2`
-2. Lower resolution in `config.py`: `nx = 200, ny = 30`
-3. Disable risk field storage: `STORE_RISK_FIELDS = False`
-4. Use lower DPI: `plt.savefig(..., dpi=300)` instead of 600
-
-### Issue: ffmpeg not found
-
-**Solution:** Install ffmpeg:
-- Windows: Download from https://ffmpeg.org/download.html
-- Or use `conda install ffmpeg` or `choco install ffmpeg`
-
----
 
 ## 📈 Example Workflow
 
