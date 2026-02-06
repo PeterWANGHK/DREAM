@@ -23,3 +23,281 @@ Stay tuned
 │  └───────────┘         └──────────────┘      └──────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
+# DRIFT Risk Field Visualization for IDEAM
+
+Overlay DRIFT's propagating risk field onto IDEAM emergency scenarios without modifying control behavior.
+
+## 📁 Files Created
+
+1. **`emergency_test_with_risk_viz.py`** - Main visualization script (original IDEAM + risk overlay)
+2. **`risk_viz_config.py`** - Configuration presets for appearance tuning
+3. **`risk_analysis_utils.py`** - Post-simulation analysis tools
+
+---
+
+## 🚀 Quick Start
+
+### Step 1: Run Visualization Simulation
+
+```bash
+cd C:\DREAM
+python emergency_test_with_risk_viz.py
+```
+
+**Output:**
+- Frames saved to `figsave_risk_viz/`
+- Risk values saved to `figsave_risk_viz/risk_at_ego.npy`
+
+**What you'll see:**
+- Original IDEAM scenario (vehicles, paths, ego motion)
+- Risk field as colored heatmap overlay
+- Risk value displayed above ego vehicle with color coding:
+  - 🟢 Green: R < 0.5 (low risk)
+  - 🟠 Orange: 0.5 ≤ R < 1.5 (moderate risk)
+  - 🔴 Red: R ≥ 1.5 (high risk)
+
+---
+
+### Step 2: Create Video Animation
+
+```bash
+# Using ffmpeg (install from https://ffmpeg.org/)
+ffmpeg -r 10 -i figsave_risk_viz/%d.png -vcodec libx264 -crf 18 -pix_fmt yuv420p risk_viz_output.mp4
+```
+
+**Parameters:**
+- `-r 10`: 10 frames per second (adjust for speed)
+- `-crf 18`: Quality (18=high, 23=medium, lower=better)
+
+---
+
+### Step 3: Analyze Risk Data
+
+```bash
+python risk_analysis_utils.py figsave_risk_viz/risk_at_ego.npy
+```
+
+**Output:**
+- `risk_timeline.png` - Risk over time with threshold lines
+- `risk_histogram.png` - Distribution of risk levels
+- `risk_analysis.png` - Comprehensive multi-panel analysis
+- `risk_events.csv` - High-risk events exported to CSV
+
+---
+
+## 🎨 Customizing Visualization
+
+### Option A: Use Presets (Easiest)
+
+Edit `emergency_test_with_risk_viz.py`, add after imports:
+
+```python
+from risk_viz_config import RiskVizConfig as viz_cfg
+
+# Choose a preset
+viz_cfg.preset_subtle()      # Low-contrast, clean
+viz_cfg.preset_dramatic()    # High-contrast, emphasizes risk
+viz_cfg.preset_scientific()  # Publication-ready with colorbar
+viz_cfg.preset_highcontrast() # For presentations
+
+# Then replace hardcoded values
+RISK_ALPHA = viz_cfg.RISK_ALPHA
+RISK_CMAP = viz_cfg.RISK_CMAP
+# ... etc
+```
+
+### Option B: Manual Tuning
+
+Edit these variables in `emergency_test_with_risk_viz.py` (around line 140):
+
+```python
+RISK_ALPHA = 0.4         # Transparency (0.0-1.0)
+RISK_CMAP = 'hot'        # Colormap: 'hot', 'YlOrRd', 'plasma', 'inferno'
+RISK_LEVELS = 15         # Number of contour levels
+RISK_VMAX = 3.0          # Max risk value for color scale
+SHOW_CONTOUR = True      # Show contour lines?
+SHOW_HEATMAP = True      # Show filled heatmap?
+```
+
+**Colormap Options:**
+- `'hot'` - Black → Red → Yellow → White (classic heat)
+- `'YlOrRd'` - Yellow → Orange → Red (warning colors)
+- `'Reds'` - White → Red (simple gradient)
+- `'plasma'` - Purple → Pink → Yellow (perceptually uniform)
+- `'inferno'` - Black → Purple → Orange → Yellow
+- `'RdYlGn_r'` - Red → Yellow → Green (reversed)
+
+---
+
+## 📊 Understanding the Risk Field
+
+### DRIFT Risk Sources
+
+The risk field combines three sources:
+
+1. **Vehicle-Induced Risk** (Anisotropic Gaussian kernels)
+   - Higher in front of moving vehicles (direction of travel)
+   - Decays with distance
+   - Intensity scales with relative velocity
+
+2. **Occlusion-Induced Risk** (Shadow regions)
+   - Elevated behind large vehicles (trucks, trailers)
+   - Represents hidden hazards in sensor blind spots
+   - Propagates based on uncertainty
+
+3. **Merge Pressure** (Topological conflicts)
+   - High in lane-change zones
+   - Elevated where lanes converge
+   - Captures structural road geometry risks
+
+### Risk Propagation Dynamics
+
+- **Advection**: Risk flows with traffic
+- **Diffusion**: Risk spreads spatially (uncertainty)
+- **Telegraph term**: Finite propagation speed (wave-like)
+
+---
+
+## 🔍 Interpreting Results
+
+### High Risk Scenarios
+
+You should see elevated risk (red zones) in:
+
+1. **Dense traffic** - Multiple vehicles close together
+2. **Behind large vehicles** - Occlusion shadows
+3. **Lane change maneuvers** - Merge pressure zones
+4. **Emergency braking** - Sudden deceleration events
+
+### Analysis Metrics
+
+From `risk_analysis_utils.py`:
+
+- **Mean Risk**: Average exposure level
+- **Peak Risk**: Maximum risk encountered
+- **Time in High Risk**: Duration above threshold
+- **Risk Events**: Discrete high-risk episodes
+
+**Typical Values:**
+- `R < 0.5`: Normal driving
+- `0.5 ≤ R < 1.5`: Caution required
+- `R ≥ 1.5`: High risk (lane change should be blocked in PRIDEAM)
+
+---
+
+## 📐 Technical Details
+
+### Simulation Parameters
+
+- **Grid**: From `config.py` (default: 400m × 60m, 1m resolution)
+- **PDE Substeps**: 3 (for numerical stability)
+- **Timestep**: 0.1s (matches IDEAM)
+- **Horizon**: 400 timesteps (40 seconds)
+
+### Performance
+
+- **Frame generation**: ~2-3 seconds per frame (depends on grid size)
+- **Full simulation**: ~15-20 minutes for 400 frames
+- **Memory**: ~500MB for storing risk fields (if enabled)
+
+**Optimization tips:**
+- Reduce `cfg.nx`, `cfg.ny` in `config.py` for faster computation
+- Disable `STORE_RISK_FIELDS` to save memory
+- Reduce `DRIFT_SUBSTEPS` from 3 to 2 (slightly less accurate)
+
+---
+
+## 🛠️ Troubleshooting
+
+### Issue: "Module 'config' not found"
+
+**Solution:** Ensure DRIFT files are in the same directory or Python path:
+```python
+sys.path.append(r"C:\DREAM")  # Add to script
+```
+
+### Issue: Risk field appears too faint
+
+**Solutions:**
+1. Increase `RISK_ALPHA` (e.g., 0.6)
+2. Lower `RISK_VMAX` (e.g., 2.0) to saturate colors earlier
+3. Use `'hot'` or `'YlOrRd'` colormap
+4. Try `viz_cfg.preset_dramatic()`
+
+### Issue: Risk field appears too cluttered
+
+**Solutions:**
+1. Decrease `RISK_ALPHA` (e.g., 0.25)
+2. Disable contour lines: `SHOW_CONTOUR = False`
+3. Increase smoothing: `RISK_SMOOTHING_SIGMA = 2.0`
+4. Try `viz_cfg.preset_subtle()`
+
+### Issue: Simulation is slow
+
+**Solutions:**
+1. Reduce PDE substeps: `DRIFT_SUBSTEPS = 2`
+2. Lower resolution in `config.py`: `nx = 200, ny = 30`
+3. Disable risk field storage: `STORE_RISK_FIELDS = False`
+4. Use lower DPI: `plt.savefig(..., dpi=300)` instead of 600
+
+### Issue: ffmpeg not found
+
+**Solution:** Install ffmpeg:
+- Windows: Download from https://ffmpeg.org/download.html
+- Or use `conda install ffmpeg` or `choco install ffmpeg`
+
+---
+
+## 📈 Example Workflow
+
+```bash
+# 1. Run simulation with visualization
+python emergency_test_with_risk_viz.py
+
+# Output: figsave_risk_viz/0.png, 1.png, ..., 399.png
+#         figsave_risk_viz/risk_at_ego.npy
+
+# 2. Create video
+ffmpeg -r 10 -i figsave_risk_viz/%d.png -vcodec libx264 -crf 18 -pix_fmt yuv420p risk_animation.mp4
+
+# 3. Analyze risk data
+python risk_analysis_utils.py figsave_risk_viz/risk_at_ego.npy
+
+# Output: risk_timeline.png, risk_histogram.png, risk_analysis.png, risk_events.csv
+
+# 4. Review results
+# - Watch risk_animation.mp4
+# - Check risk_analysis.png for statistics
+# - Inspect risk_events.csv for high-risk moments
+```
+
+---
+
+## 🔄 Next Steps
+
+### Compare with PRIDEAM Integration
+
+1. Run original (no risk): `python emergency_test.py` → `figsave/`
+2. Run with visualization: `python emergency_test_with_risk_viz.py` → `figsave_risk_viz/`
+3. Run PRIDEAM (risk-modulated control): `python prideam_test.py` → `figsave_prideam/`
+
+Compare outputs to see:
+- Where risk is highest (visualization)
+- How MPC behavior changes with risk integration (PRIDEAM)
+- Impact on safety metrics (S_obs, TTC, velocity)
+
+### Adjust Risk Weights
+
+If integrating with PRIDEAM, tune weights based on observed risk levels:
+
+```python
+prideam = create_prideam_controller(
+    paths={0: path1c, 1: path2c, 2: path3c},
+    risk_weights={
+        'decision_threshold': 1.2,    # Lower if too restrictive
+        'cbf_modulation': 0.25,       # Reduce if MPC fails often
+        'headway_modulation': 0.3,    # Adjust following distance
+    }
+)
+```
+
