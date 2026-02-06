@@ -29,14 +29,6 @@ Stay tuned
 
 Overlay DRIFT's propagating risk field onto IDEAM emergency scenarios without modifying control behavior.
 
-## 📁 Files Created
-
-1. **`emergency_test_with_risk_viz.py`** - Main visualization script (original IDEAM + risk overlay)
-2. **`risk_viz_config.py`** - Configuration presets for appearance tuning
-3. **`risk_analysis_utils.py`** - Post-simulation analysis tools
-
----
-
 ## 🚀 Quick Start
 
 ### Step 1: Run Visualization Simulation
@@ -50,28 +42,12 @@ python emergency_test_with_risk_viz.py
 - Frames saved to `figsave_risk_viz/`
 - Risk values saved to `figsave_risk_viz/risk_at_ego.npy`
 
-**What you'll see:**
-- Original IDEAM scenario (vehicles, paths, ego motion)
-- Risk field as colored heatmap overlay
-- Risk value displayed above ego vehicle with color coding:
-  - 🟢 Green: R < 0.5 (low risk)
-  - 🟠 Orange: 0.5 ≤ R < 1.5 (moderate risk)
-  - 🔴 Red: R ≥ 1.5 (high risk)
-
----
-
 ### Step 2: Create Video Animation
 
 ```bash
-# Using ffmpeg (install from https://ffmpeg.org/)
-ffmpeg -r 10 -i figsave_risk_viz/%d.png -vcodec libx264 -crf 18 -pix_fmt yuv420p risk_viz_output.mp4
+# You may change the file name every epoch you run the simulation and then save the video
+python video_generation.py
 ```
-
-**Parameters:**
-- `-r 10`: 10 frames per second (adjust for speed)
-- `-crf 18`: Quality (18=high, 23=medium, lower=better)
-
----
 
 ### Step 3: Analyze Risk Data
 
@@ -180,11 +156,6 @@ From `risk_analysis_utils.py`:
 - **Time in High Risk**: Duration above threshold
 - **Risk Events**: Discrete high-risk episodes
 
-**Typical Values:**
-- `R < 0.5`: Normal driving
-- `0.5 ≤ R < 1.5`: Caution required
-- `R ≥ 1.5`: High risk (lane change should be blocked in PRIDEAM)
-
 ---
 
 ## 📐 Technical Details
@@ -201,12 +172,6 @@ From `risk_analysis_utils.py`:
 - **Frame generation**: ~2-3 seconds per frame (depends on grid size)
 - **Full simulation**: ~15-20 minutes for 400 frames
 - **Memory**: ~500MB for storing risk fields (if enabled)
-
-**Optimization tips:**
-- Reduce `cfg.nx`, `cfg.ny` in `config.py` for faster computation
-- Disable `STORE_RISK_FIELDS` to save memory
-- Reduce `DRIFT_SUBSTEPS` from 3 to 2 (slightly less accurate)
-
 ---
 
 
@@ -220,7 +185,7 @@ python emergency_test_with_risk_viz.py
 #         figsave_risk_viz/risk_at_ego.npy
 
 # 2. Create video
-ffmpeg -r 10 -i figsave_risk_viz/%d.png -vcodec libx264 -crf 18 -pix_fmt yuv420p risk_animation.mp4
+python video_generation.py
 
 # 3. Analyze risk data
 python risk_analysis_utils.py figsave_risk_viz/risk_at_ego.npy
@@ -228,7 +193,6 @@ python risk_analysis_utils.py figsave_risk_viz/risk_at_ego.npy
 # Output: risk_timeline.png, risk_histogram.png, risk_analysis.png, risk_events.csv
 
 # 4. Review results
-# - Watch risk_animation.mp4
 # - Check risk_analysis.png for statistics
 # - Inspect risk_events.csv for high-risk moments
 ```
@@ -241,12 +205,12 @@ python risk_analysis_utils.py figsave_risk_viz/risk_at_ego.npy
 
 1. Run original (no risk): `python emergency_test.py` → `figsave/`
 2. Run with visualization: `python emergency_test_with_risk_viz.py` → `figsave_risk_viz/`
-3. Run PRIDEAM (risk-modulated control): `python prideam_test.py` → `figsave_prideam/`
+3. Run DREAM (risk-modulated control): `python dream_test.py` → `figsave_prideam/`
 
 Compare outputs to see:
 - Where risk is highest (visualization)
-- How MPC behavior changes with risk integration (PRIDEAM)
-- Impact on safety metrics (S_obs, TTC, velocity)
+- How MPC behavior changes with risk integration
+- Impact on safety metrics
 
 ### Adjust Risk Weights
 
