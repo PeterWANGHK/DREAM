@@ -6,6 +6,7 @@ This project will extend from both [DRIFT](https://github.com/PeterWANGHK/DRIFT.
 Stay tuned
 
 ### proposed framework:
+```
 ┌─────────────────────────────────────────────────────────────┐
 │                      DREAM ARCHITECTURE                     │
 │                                                             │
@@ -21,3 +22,4 @@ Stay tuned
 │  │  State    │         │   Gating     │      │ Actions  │   │
 │  └───────────┘         └──────────────┘      └──────────┘   │
 └─────────────────────────────────────────────────────────────┘
+```
