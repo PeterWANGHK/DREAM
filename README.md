@@ -5,7 +5,7 @@ This project will extend from both [DRIFT](https://github.com/PeterWANGHK/DRIFT.
 
 Stay tuned
 ### demonstration of emergency vehicle traveling with safety-critical:
-![Watch the video](assests/DREAM_demo1.mp4)
+![Watch the video](assests/DREAM_demo2.mp4)
 
 ### proposed framework:
 ```
