@@ -4,6 +4,8 @@ DREAM: Dynamic Risk-Aware Enhanced Autonomous Maneuver Planning for Highway Inte
 This project will extend from both [DRIFT](https://github.com/PeterWANGHK/DRIFT.git) and [IDEAM](https://github.com/YimingShu-teay/IDEAM.git) as a joint work by Zian Wang and [Yiming Shu](https://github.com/YimingShu-teay)
 
 Stay tuned
+### demonstration of emergency vehicle traveling with safety-critical:
+[![Watch the video](assests/DREAM_demo1.mp4)
 
 ### proposed framework:
 ```
