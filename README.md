@@ -7,10 +7,10 @@ Stay tuned
 
 ### proposed framework:
 ┌─────────────────────────────────────────────────────────────┐
-│                      DEAM ARCHITECTURE                      │
+│                      DREAM ARCHITECTURE                     │
 │                                                             │
 │  ┌────────────┐        ┌──────────────┐      ┌──────────┐   │
-│  │   DRIFT    │───────▶   PRIDEAM     ─────▶  IDEAM    │   │
+│  │   DRIFT    │───────▶   DREAM        ─────▶  IDEAM   │   │
 │  │ Risk Field │ Risk   │  Controller  │ Mod. │ LMPC+CBF │   │
 │  │   (PDE)    │ Query  │              │Params│          │   │
 │  └────────────┘        └──────────────┘      └──────────┘   │
