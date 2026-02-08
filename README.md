@@ -7,8 +7,6 @@ Stay tuned
 ### demonstration of emergency vehicle traveling with safety-critical:
 ![simple snapshot for quick understanding](assests/DREAM_demo3.gif)
 
-![Watch the video for full ego behaviors (stop-and-go, LC, accelaration, etc.)](assests/DREAM_demo2.mp4)
-
 ### proposed framework:
 ```
 ┌─────────────────────────────────────────────────────────────┐
