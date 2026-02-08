@@ -5,8 +5,9 @@ This project will extend from both [DRIFT](https://github.com/PeterWANGHK/DRIFT.
 
 Stay tuned
 ### demonstration of emergency vehicle traveling with safety-critical:
-![Watch the video for full ego behaviors (stop-and-go, LC, accelaration, etc.)](assests/DREAM_demo2.mp4)
 ![simple snapshot for quick understanding](assests/DREAM_demo3.gif)
+
+![Watch the video for full ego behaviors (stop-and-go, LC, accelaration, etc.)](assests/DREAM_demo2.mp4)
 
 ### proposed framework:
 ```
