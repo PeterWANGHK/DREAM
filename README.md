@@ -197,33 +197,3 @@ python risk_analysis_utils.py figsave_risk_viz/risk_at_ego.npy
 # - Inspect risk_events.csv for high-risk moments
 ```
 
----
-
-## 🔄 Next Steps
-
-### Compare with PRIDEAM Integration
-
-1. Run original (no risk): `python emergency_test.py` → `figsave/`
-2. Run with visualization: `python emergency_test_with_risk_viz.py` → `figsave_risk_viz/`
-3. Run DREAM (risk-modulated control): `python dream_test.py` → `figsave_prideam/`
-
-Compare outputs to see:
-- Where risk is highest (visualization)
-- How MPC behavior changes with risk integration
-- Impact on safety metrics
-
-### Adjust Risk Weights
-
-If integrating with PRIDEAM, tune weights based on observed risk levels:
-
-```python
-prideam = create_prideam_controller(
-    paths={0: path1c, 1: path2c, 2: path3c},
-    risk_weights={
-        'decision_threshold': 1.2,    # Lower if too restrictive
-        'cbf_modulation': 0.25,       # Reduce if MPC fails often
-        'headway_modulation': 0.3,    # Adjust following distance
-    }
-)
-```
-
