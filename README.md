@@ -8,7 +8,7 @@ Stay tuned
 ![simple snapshot for quick understanding](assests/DREAM_demo3.gif)
 
 ### demonstration of LC for emergency vehicle with safety-critical considerations ([IDEAM](https://github.com/YimingShu-teay/IDEAM.git)-based planning):
-![simple snapshot for quick understanding](assests/DREAM_demo4.gif)
+![simple snapshot for quick understanding](assests/DREAM_demo2.gif)
 
 ### proposed framework:
 ```
